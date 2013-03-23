@@ -16,7 +16,7 @@ TANKS = {
 module BattleTank
   class Server
 
-    WAIT_TIME = 0.2
+    WAIT_TIME = 0.1
 
     def initialize(server_pub)
       @server_pub = server_pub
