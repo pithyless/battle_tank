@@ -7,7 +7,7 @@ require 'battle_tank/players'
 module BattleTank
   class Server
 
-    WAIT_TIME = 0.1
+    WAIT_TIME = 0.15
 
     def initialize(server_pub)
       @server_pub = server_pub

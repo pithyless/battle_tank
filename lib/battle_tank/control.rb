@@ -18,6 +18,7 @@ class Control
 
   def register_player
     client_push.send({ action: 'new_player' })
+    sleep 1
   end
 
   attr_reader :view_port

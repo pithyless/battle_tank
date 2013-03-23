@@ -41,6 +41,8 @@ module BattleTank
         raise "SUB socket returned errno [#{ZMQ::Util.errno}], msg [#{ZMQ::Util.error_string}]" unless ZMQ::Util.resultcode_ok?(rc)
 
         handler.do_action(string.dup)
+
+        sleep 0.1
       end
     end
 

@@ -8,9 +8,9 @@ view = ViewPort.new(world, 100, 100)
 
 control = Control.new(view)
 
+control.register_player
+
 control.view_loop
 control.input_loop
-
-control.register_player
 
 control.until_quit
