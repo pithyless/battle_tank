@@ -1,4 +1,5 @@
 {
+  "default_bullet":"o",
   "free_space": " ",
   "walls": [
     "░",
