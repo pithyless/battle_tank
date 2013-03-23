@@ -1,4 +1,5 @@
 require 'curses'
+require 'battle_tank/curses_initializer'
 
 class ViewPort
   def initialize(world, width, height)
