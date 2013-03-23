@@ -32,7 +32,7 @@ class Control
   def do_action(action)
     moves = BERT.decode(action).fetch('moves')
     moves.each do |move|
-      view_port.world.move(move[:id], move[:x], move[:y])
+      view_port.world.move(move[:id], move[:x], move[:y], dir: move[:dir])
     end
   end
 

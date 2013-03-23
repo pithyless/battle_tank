@@ -54,13 +54,13 @@ module BattleTank
         diffs['moves'] ||= []
 
         case data.fetch(:dir)
-        when :up; tank.y -= 1
-        when :down; tank.y += 1
-        when :left; tank.x -= 1
-        when :right; tank.x += 1
+        when :up; tank.y -= 1; tank.direction = :up
+        when :down; tank.y += 1; tank.direction = :down
+        when :left; tank.x -= 1; tank.direction = :left
+        when :right; tank.x += 1; tank.direction = :right
         end
 
-        diffs['moves'] << {id: tank_id, x: tank.x, y: tank.y}
+        diffs['moves'] << {id: tank_id, x: tank.x, y: tank.y, dir: tank.direction}
       end
     end
 
@@ -79,9 +79,8 @@ module BattleTank
 
       loop do
         sleep (WAIT_TIME)
-
         next if diffs.empty?
-        puts "\n\n"
+
         broadcast_diff(diffs)
         diffs = {}
       end

@@ -6,10 +6,10 @@ module BattleTank
       def initialize(model)
         @model = model
         @definition = BattleTank::ConfigLoader.new.tank(model)
-        direction(:up)
+        direction = :up
       end
 
-      attr_accessor :x, :y, :width, :height
+      attr_accessor :x, :y, :width, :height, :direction
 
       def width
         show.first.length
@@ -20,11 +20,7 @@ module BattleTank
       end
 
       def show
-        definition['model']["#{side.to_s}"]
-      end
-
-      def direction(side)
-        @side = side
+        definition['model']["#{direction.to_s}"]
       end
 
       def bullet
@@ -37,13 +33,13 @@ module BattleTank
           "model" => model,
           "x" => x,
           "y" => y,
-          "dir" => side.to_s
+          "dir" => direction.to_s
         }
       end
 
       def self.from_hash(hash)
         BattleTank::Client::Tank.new(hash['model']).tap do |tank|
-          tank.direction(hash['dir'].to_sym)
+          tank.direction = hash['dir'].to_sym
           tank.x = hash['x']
           tank.y = hash['y']
         end
@@ -51,7 +47,7 @@ module BattleTank
 
       private
 
-      attr_reader :definition, :side, :model
+      attr_reader :definition, :model
     end
   end
 end

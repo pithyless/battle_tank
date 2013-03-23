@@ -36,9 +36,10 @@ class World
     }
   end
 
-  def move(id, x, y)
+  def move(id, x, y, opts={})
     objects[id].x = x
     objects[id].y = y
+    objects[id].direction = opts[:dir] if opts[:dir]
   end
 
   def add(x, y, value)
