@@ -18,4 +18,5 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
 
   gem.add_dependency 'ffi-rzmq', '~> 1.0.0'
+  gem.add_dependency 'bert', '~> 1.1.6'
 end

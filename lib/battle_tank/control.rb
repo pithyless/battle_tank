@@ -1,12 +1,28 @@
-# $DEBUG = true
+$DEBUG = true
+
 require 'curses'
+require 'bert'
+require 'battle_tank/client_sub'
 
 class Control
   def initialize(view_port)
     @view_port = view_port
+    init_client_sub
   end
 
   attr_reader :view_port
+
+  def init_client_sub
+    sub = BattleTank::ClientSub.new(self)
+    Thread.new do
+      sub.handle_requests
+    end
+  end
+
+  def do_action(action)
+    decode = BERT.decode(action).fetch('tank')
+    view_port.world.add(decode[:x], decode[:y], 'TANK')
+  end
 
   def view_loop
     @view_loop = Thread.new do
@@ -31,7 +47,6 @@ class Control
         when :right
           view_port.scroll(1, 0)
         end
-        view_port.refresh
       end
     end
   end
