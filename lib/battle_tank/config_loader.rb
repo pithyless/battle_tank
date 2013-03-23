@@ -1,4 +1,4 @@
-require "json"
+
 module BattleTank
   class ConfigLoader
 
@@ -17,8 +17,8 @@ module BattleTank
     end
 
     def elements(elem_name)
-      file = File.open(File.join(base_path, 'models', 'maps', "#{map_name}.json"))
-      JSON.parse(file.read)
+      file = File.open(File.join(base_path, 'models', "world.json"))
+      JSON.parse(file.read)["#{elem_name}"]
     end
     private
 
