@@ -8,7 +8,7 @@ def player_tank_id(client_id)
 end
 
 TANKS = {
-  'tank1' => BattleTank::Client::Tank.new('', 'medium').tap do |t|
+  'tank1' => BattleTank::Client::Tank.new('medium').tap do |t|
     t.x = 4; t.y = 6;
   end
 }

@@ -11,8 +11,6 @@ module BattleTank
     attr_reader :context, :pub_socket
 
     def broadcast(data)
-      puts "Broadcast => #{data}\n"
-
       rc = pub_socket.send_string(BERT.encode(data))
       unless ZMQ::Util.resultcode_ok?(rc)
         STDERR.print("pub socket returned errno [#{ZMQ::Util.errno}], msg [#{ZMQ::Util.error_string}]")

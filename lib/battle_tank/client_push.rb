@@ -27,7 +27,7 @@ module BattleTank
       rc = push_socket.setsockopt(ZMQ::LINGER, 1000)
       raise "Push socket failed to set LINGER!" unless ZMQ::Util.resultcode_ok?(rc)
 
-      transport = "tcp://127.0.0.1:5560"
+      transport = "tcp://172.17.66.167:5560"
       rc = push_socket.connect(transport)
       raise "Push socket could not connect!" unless ZMQ::Util.resultcode_ok?(rc)
 
