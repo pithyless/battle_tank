@@ -34,16 +34,43 @@ class ViewPort
     Curses.doupdate
   end
 
-  def confirm
+  def get_key
     window.timeout = -1
-    window.getch
+
+    key = window.getch.ord
+    key = parse_key(key)
+
     window.timeout = 0
+    key
+  end
+
+  def parse_key(ch, prev=[])
+    case [ch, prev]
+    when [27, []]
+      parse_key(window.getch.ord, [27])
+    when [91, [27]]
+      parse_key(window.getch.ord, [27, 91])
+    when [65, [27, 91]]
+      :up
+    when [66, [27, 91]]
+      :down
+    when [67, [27, 91]]
+      :right
+    when [68, [27, 91]]
+      :left
+    else
+      ch.chr
+    end
   end
 
   def scroll(x, y)
-    @view_x += x
-    @view_y += y
+    newx = view_x + x
+    newy = view_y + y
 
-    # TODO: max borders
+    newx = [ [0, newx].max, world.width-1 ].min
+    newy = [ [0, newy].max, world.height-1 ].min
+
+    @view_x = newx
+    @view_y = newy
   end
 end
