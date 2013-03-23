@@ -1,3 +1,4 @@
+require "json"
 
 module BattleTank
   class ConfigLoader
