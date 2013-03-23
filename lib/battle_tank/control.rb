@@ -42,7 +42,10 @@ class Control
       end
     elsif action['create']
       action['create'].each do |create|
-        view_port.world.objects[create[:id]] = BattleTank::Client::Tank.new('medium') do |t|
+        types = ['cannon', 'engineer', 'light', 'heavy', 'miner', 'medium']
+        type = types[rand(types.length)]
+
+        view_port.world.objects[create[:id]] = BattleTank::Client::Tank.new(type) do |t|
           t.x = create[:x]
           t.y = create[:y]
           t.direction = create[:dir]
