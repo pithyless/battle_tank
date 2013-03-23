@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'battle_tank/config_loader'
 
 module BattleTank
@@ -5,7 +7,7 @@ module BattleTank
     class Tank
       def initialize(model)
         @model = model
-        @definition = BattleTank::ConfigLoader.new.tank(model)
+        @definition = all[model]
         direction = :up
       end
 
@@ -45,9 +47,170 @@ module BattleTank
         end
       end
 
+
       private
 
-      attr_reader :definition, :model
+      def all
+        {
+          "cannon" => {
+            "model" =>  {
+              "left" =>  [
+                "  ═══",
+                "╠══■│",
+                "  ═══"
+              ],
+              "right" =>  [
+                "═══  ",
+                "│■══╣",
+                "═══  "
+              ],
+              "up" =>  [
+                " ═╦═ ",
+                "║ ║ ║",
+                "║─▀─║"
+              ],
+              "down" =>  [
+                "║─▄─║",
+                "║ ║ ║",
+                " ═╩═ "
+              ]
+            },
+            "bullet" =>  "■"
+          },
+
+          "engineer" => {
+            "model" =>  {
+              "left" =>  [
+                "■■■■■",
+                "┼─┤■│",
+                "■■■■■"
+              ],
+              "right" =>  [
+                "■■■■■",
+                "┼─┤■│",
+                "■■■■■"
+              ],
+              "up" => [
+                "█─┼─█",
+                "█─┼─█",
+                "█─▀─█"
+              ],
+              "down" => [
+                "█─▄─█",
+                "█─┼─█",
+                "█─┼─█"
+              ],
+            },
+            "bullet" => "."
+          },
+          "heavy" => {
+
+            "model" =>  {
+              "left" =>  [
+                "■■■■■",
+                "┼─┤■│",
+                "■■■■■"
+              ],
+              "right" =>  [
+                "■■■■■",
+                "┼─┤■│",
+                "■■■■■"
+              ],
+              "up" => [
+                "█─┼─█",
+                "█─┼─█",
+                "█─▀─█"
+              ],
+              "down" => [
+                "█─▄─█",
+                "█─┼─█",
+                "█─┼─█"
+              ],
+            },
+            "bullet" => "."
+          },
+          "light" => {
+            "model" => {
+              "left" => [
+                "═════",
+                "──o |",
+                "═════"
+              ],
+              "right" => [
+                "═════",
+                "| o──",
+                "═════"
+              ],
+              "up" => [
+                "║ | ║",
+                "║ o ║",
+                "║───║"
+              ],
+              "down" => [
+                "║───║",
+                "║ o ║",
+                "║ | ║"
+              ]
+            },
+            "bullet" => ""
+          },
+          "medium" => {
+            "model" => {
+              "left" => [
+                "═════",
+                "══■ │",
+                "═════"
+              ],
+              "right" => [
+                "═════",
+                "│ ■══",
+                "═════"
+              ],
+              "up" => [
+                "║ ║ ║",
+                "║ ▀ ║",
+                "║───║"
+              ],
+              "down" => [
+                "║───║",
+                "║ ▄ ║",
+                "║ ║ ║"
+              ]
+            },
+            "bullet" => "o"
+          },
+          "miner" => {
+            "model" => {
+              "left" => [
+                "■■■■■",
+                "─■ o│",
+                "■■■■■"
+              ],
+              "right" => [
+                "■■■■■",
+                "│o ■─",
+                "■■■■■"
+              ],
+              "up" => [
+                "█ | █",
+                "█ ▀ █",
+                "█─o─█"
+              ],
+              "down" => [
+                "█─o─█",
+                "█ ▄ █",
+                "█ | █"
+              ]
+            },
+            "bullet" => "Ⓧ"
+          }
+
+        }
+
+
+      end
+
+      attr_reader  :definition, :model
     end
   end
 end
