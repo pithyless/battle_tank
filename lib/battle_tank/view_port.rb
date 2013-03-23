@@ -31,7 +31,7 @@ class ViewPort
       viewable_row = row[view_x..width]
       window.addstr(viewable_row)
     end
-    Curses.doupdate
+    window.refresh
   end
 
   def get_key
@@ -61,6 +61,8 @@ class ViewPort
     else
       ch.chr
     end
+  rescue RangeError
+    ' '
   end
 
   def scroll(x, y)

@@ -5,6 +5,7 @@ require 'battle_tank/client/tank'
 
 world = World.new(500, 500)
 view = ViewPort.new(world, 100, 100)
+
 control = Control.new(view)
 
 t = BattleTank::Client::Tank.new('jojo', "cannon")
@@ -14,9 +15,4 @@ world.add(1, 5, 'goodbye')
 
 control.view_loop
 control.input_loop
-
 control.until_quit
-
-# view.scroll(3, 3)
-# view.refresh
-# view.confirm
