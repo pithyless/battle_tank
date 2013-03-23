@@ -23,7 +23,7 @@ module BattleTank
 
       pub_socket = context.socket(ZMQ::PUB)
 
-      rc = pub_socket.setsockopt(ZMQ::LINGER, 1000)
+      rc = pub_socket.setsockopt(ZMQ::LINGER, 0)
       raise "pub socket failed to set LINGER!" unless ZMQ::Util.resultcode_ok?(rc)
 
       transport = "tcp://*:5770"
