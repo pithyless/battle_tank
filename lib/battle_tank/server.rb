@@ -1,15 +1,28 @@
+$DEBUG = true
+
 require 'ffi-rzmq'
+require 'battle_tank/client/tank'
+require 'battle_tank/players'
 
 module BattleTank
   class Server
 
-    WAIT_TIME = 0.2
+    WAIT_TIME = 0.15
 
-    def initialize
+    def initialize(server_pub)
+      @server_pub = server_pub
       init_pull_socket
     end
 
-    attr_reader :pull_socket, :context
+    attr_reader :pull_socket, :context, :server_pub
+
+    def players
+      @players ||= BattleTank::Players.new
+    end
+
+    def broadcast_diff(diffs)
+      server_pub.broadcast(diffs)
+    end
 
     def init_pull_socket
       context = ZMQ::Context.new
@@ -25,30 +38,52 @@ module BattleTank
 
       @pull_socket = pull_socket
       @context = context
-      p 'Waiting...'
+    end
+
+    def make_diff(diffs, data)
+      if data[:action] == 'move'
+        client_id = data.fetch(:client_id)
+        tank_id = players.player_tank_id(client_id)
+        tank = players.tanks.fetch(tank_id)
+
+        diffs['moves'] ||= []
+
+        case data.fetch(:dir)
+        when :up; tank.y -= 1; tank.direction = :up
+        when :down; tank.y += 1; tank.direction = :down
+        when :left; tank.x -= 1; tank.direction = :left
+        when :right; tank.x += 1; tank.direction = :right
+        end
+
+        diffs['moves'] << {id: tank_id, x: tank.x, y: tank.y, dir: tank.direction}
+      elsif data[:action] == 'new_player'
+        diffs['create'] ||= []
+
+        tank_id = players.add_player(data.fetch(:client_id))
+        tank = players.tanks.fetch(tank_id)
+        diffs['create'] << { id: tank_id, x: tank.x, y: tank.y, dir: tank.direction }
+      end
     end
 
     def handle_requests
       # Let's use GIL to our advantage! mwahahaha...
-      queue = []
+      diffs = {}
 
       receiver = Thread.new do
         loop do
           string = ''
           rc = pull_socket.recv_string(string)
           raise "PULL socket returned errno [#{ZMQ::Util.errno}], msg [#{ZMQ::Util.error_string}]" unless ZMQ::Util.resultcode_ok?(rc)
-
-          queue << string.dup
+          make_diff(diffs, BERT.decode(string.dup))
         end
       end
 
       loop do
         sleep (WAIT_TIME)
+        next if diffs.empty?
 
-        next if queue.empty?
-        puts "\n\n"
-        p queue
-        queue = []
+        broadcast_diff(diffs)
+        diffs = {}
       end
     end
 

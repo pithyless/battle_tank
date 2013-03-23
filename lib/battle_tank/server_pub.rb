@@ -10,20 +10,8 @@ module BattleTank
 
     attr_reader :context, :pub_socket
 
-    def broadcast_world
-      while true do
-        x, y = 2, 2
-        (1..30).each do |idx|
-          broadcast(BERT.encode('moves' => [ {id: 'tank1', x: x + idx, y: y + idx} ]))
-          sleep 0.5
-        end
-      end
-    end
-
-    def broadcast(msg)
-      puts "Broadcast => #{msg}\n"
-
-      rc = pub_socket.send_string(msg)
+    def broadcast(data)
+      rc = pub_socket.send_string(BERT.encode(data))
       unless ZMQ::Util.resultcode_ok?(rc)
         STDERR.print("pub socket returned errno [#{ZMQ::Util.errno}], msg [#{ZMQ::Util.error_string}]")
         exit!

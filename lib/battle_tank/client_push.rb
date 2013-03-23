@@ -1,20 +1,18 @@
 require 'ffi-rzmq'
+require 'bert'
 
 module BattleTank
-  class Client
+  class ClientPush
 
-    def initialize(name)
+    def initialize(client_id)
       init_push_socket
-      @name = name
+      @client_id = client_id
     end
 
-    attr_reader :name, :context, :push_socket
+    attr_reader :client_id, :context, :push_socket
 
-    def send(msg)
-      packet = "Client[#{name}]: #{msg}"
-
-      puts "Sending => #{packet}\n"
-      rc = push_socket.send_string(packet)
+    def send(data)
+      rc = push_socket.send_string(BERT.encode(data.merge(client_id: client_id)))
       unless ZMQ::Util.resultcode_ok?(rc)
         STDERR.print("PUSH socket returned errno [#{ZMQ::Util.errno}], msg [#{ZMQ::Util.error_string}]")
         exit!
@@ -29,7 +27,7 @@ module BattleTank
       rc = push_socket.setsockopt(ZMQ::LINGER, 1000)
       raise "Push socket failed to set LINGER!" unless ZMQ::Util.resultcode_ok?(rc)
 
-      transport = "tcp://127.0.0.1:5560"
+      transport = "tcp://172.17.66.167:5560"
       rc = push_socket.connect(transport)
       raise "Push socket could not connect!" unless ZMQ::Util.resultcode_ok?(rc)
 
@@ -39,7 +37,7 @@ module BattleTank
     end
 
     def close
-      puts "Client[#{name}]: exiting..."
+      puts "Client[#{client_id}]: exiting..."
       push_socket.close
       context.terminate
     end

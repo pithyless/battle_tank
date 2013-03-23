@@ -23,7 +23,7 @@ module BattleTank
       rc = sub_socket.setsockopt(ZMQ::SUBSCRIBE, '')
       raise "sub socket failed to set LINGER!" unless ZMQ::Util.resultcode_ok?(rc)
 
-      transport = "tcp://127.0.0.1:5770"
+      transport = "tcp://172.17.66.167:5770"
       rc = sub_socket.connect(transport)
       raise "sub socket could not connect!" unless ZMQ::Util.resultcode_ok?(rc)
 
@@ -34,7 +34,6 @@ module BattleTank
     end
 
     def handle_requests
-      p 'Waiting...'
       while true do
 
         string = ''
@@ -42,6 +41,8 @@ module BattleTank
         raise "SUB socket returned errno [#{ZMQ::Util.errno}], msg [#{ZMQ::Util.error_string}]" unless ZMQ::Util.resultcode_ok?(rc)
 
         handler.do_action(string.dup)
+
+        sleep 0.1
       end
     end
 
