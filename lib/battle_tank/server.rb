@@ -2,6 +2,7 @@ $DEBUG = true
 
 require 'ffi-rzmq'
 require 'battle_tank/client/tank'
+require 'battle_tank/players'
 
 module BattleTank
   class Server
@@ -16,7 +17,7 @@ module BattleTank
     attr_reader :pull_socket, :context, :server_pub
 
     def players
-      @players ||= Players.new
+      @players ||= BattleTank::Players.new
     end
 
     def broadcast_diff(diffs)
@@ -42,8 +43,9 @@ module BattleTank
     def make_diff(diffs, data)
       if data[:action] == 'move'
         client_id = data.fetch(:client_id)
-        tank_id = player_tank_id(client_id)
-        tank = TANKS.fetch(tank_id)
+        tank_id = players.player_tank_id(client_id)
+        tank = players.tanks.fetch(tank_id)
+
         diffs['moves'] ||= []
 
         case data.fetch(:dir)
@@ -54,6 +56,12 @@ module BattleTank
         end
 
         diffs['moves'] << {id: tank_id, x: tank.x, y: tank.y, dir: tank.direction}
+      elsif data[:action] == 'new_player'
+        diffs['create'] ||= []
+
+        tank_id = players.add_player(data.fetch(:client_id))
+        tank = players.tanks.fetch(tank_id)
+        diffs['create'] << { id: tank_id, x: tank.x, y: tank.y, dir: tank.direction }
       end
     end
 

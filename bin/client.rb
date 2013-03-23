@@ -10,4 +10,7 @@ control = Control.new(view)
 
 control.view_loop
 control.input_loop
+
+control.register_player
+
 control.until_quit

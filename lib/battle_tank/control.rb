@@ -16,6 +16,10 @@ class Control
     @client_id ||= SecureRandom.hex
   end
 
+  def register_player
+    client_push.send({ action: 'new_player' })
+  end
+
   attr_reader :view_port
 
   def init_client_sub
@@ -29,10 +33,20 @@ class Control
     @client_push ||= BattleTank::ClientPush.new(client_id)
   end
 
-  def do_action(action)
-    moves = BERT.decode(action).fetch('moves')
-    moves.each do |move|
-      view_port.world.move(move[:id], move[:x], move[:y], dir: move[:dir])
+  def do_action(data)
+    action = BERT.decode(data)
+    if action['moves']
+      action['moves'].each do |move|
+        view_port.world.move(move[:id], move[:x], move[:y], dir: move[:dir])
+      end
+    elsif action['create']
+      action['create'].each do |create|
+        view_port.world.objects[create[:id]] = BattleTank::Client::Tank.new('medium') do |t|
+          t.x = create[:x]
+          t.y = create[:y]
+          t.direction = create[:dir]
+        end
+      end
     end
   end
 

@@ -6,13 +6,13 @@ module BattleTank
 
     def add_player(client_id)
       @next_id += 1
-      @tanks.merge!({"#{next_id}" => gen_tank})
-      @clients.merge!({client_id => next_id.to_s})
-      @next_id
+      tanks.merge!({"#{next_id}" => gen_tank})
+      clients.merge!({client_id => next_id.to_s})
+      @next_id.to_s
     end
 
     def player_tank_id(client_id)
-      @clients.fetch(client_id)
+      clients.fetch(client_id)
     end
 
     def clients
