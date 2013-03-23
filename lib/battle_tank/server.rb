@@ -3,16 +3,6 @@ $DEBUG = true
 require 'ffi-rzmq'
 require 'battle_tank/client/tank'
 
-def player_tank_id(client_id)
-  'tank1'
-end
-
-TANKS = {
-  'tank1' => BattleTank::Client::Tank.new('medium').tap do |t|
-    t.x = 4; t.y = 6;
-  end
-}
-
 module BattleTank
   class Server
 
@@ -25,6 +15,9 @@ module BattleTank
 
     attr_reader :pull_socket, :context, :server_pub
 
+    def players
+      @players ||= Players.new
+    end
 
     def broadcast_diff(diffs)
       server_pub.broadcast(diffs)
