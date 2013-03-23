@@ -1,15 +1,34 @@
+$DEBUG = true
+
 require 'ffi-rzmq'
+require 'battle_tank/client/tank'
+
+def player_tank_id(client_id)
+  'tank1'
+end
+
+TANKS = {
+  'tank1' => BattleTank::Client::Tank.new('', 'medium').tap do |t|
+    t.x = 4; t.y = 6;
+  end
+}
 
 module BattleTank
   class Server
 
     WAIT_TIME = 0.2
 
-    def initialize
+    def initialize(server_pub)
+      @server_pub = server_pub
       init_pull_socket
     end
 
-    attr_reader :pull_socket, :context
+    attr_reader :pull_socket, :context, :server_pub
+
+
+    def broadcast_diff(diffs)
+      server_pub.broadcast(diffs)
+    end
 
     def init_pull_socket
       context = ZMQ::Context.new
@@ -25,30 +44,46 @@ module BattleTank
 
       @pull_socket = pull_socket
       @context = context
-      p 'Waiting...'
+    end
+
+    def make_diff(diffs, data)
+      if data[:action] == 'move'
+        client_id = data.fetch(:client_id)
+        tank_id = player_tank_id(client_id)
+        tank = TANKS.fetch(tank_id)
+        diffs['moves'] ||= []
+
+        case data.fetch(:dir)
+        when :up; tank.y -= 1
+        when :down; tank.y += 1
+        when :left; tank.x -= 1
+        when :right; tank.x += 1
+        end
+
+        diffs['moves'] << {id: tank_id, x: tank.x, y: tank.y}
+      end
     end
 
     def handle_requests
       # Let's use GIL to our advantage! mwahahaha...
-      queue = []
+      diffs = {}
 
       receiver = Thread.new do
         loop do
           string = ''
           rc = pull_socket.recv_string(string)
           raise "PULL socket returned errno [#{ZMQ::Util.errno}], msg [#{ZMQ::Util.error_string}]" unless ZMQ::Util.resultcode_ok?(rc)
-
-          queue << string.dup
+          make_diff(diffs, BERT.decode(string.dup))
         end
       end
 
       loop do
         sleep (WAIT_TIME)
 
-        next if queue.empty?
+        next if diffs.empty?
         puts "\n\n"
-        p queue
-        queue = []
+        broadcast_diff(diffs)
+        diffs = {}
       end
     end
 

@@ -34,7 +34,6 @@ module BattleTank
     end
 
     def handle_requests
-      p 'Waiting...'
       while true do
 
         string = ''

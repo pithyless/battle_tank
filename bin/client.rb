@@ -8,11 +8,6 @@ view = ViewPort.new(world, 100, 100)
 
 control = Control.new(view)
 
-t = BattleTank::Client::Tank.new("cannon")
-t.direction(:left)
-#world.add(5, 10, t.show)
-#world.add(1, 5, 'goodbye')
-
 control.view_loop
 control.input_loop
 control.until_quit

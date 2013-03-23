@@ -1,20 +1,13 @@
 require 'battle_tank/server'
 require 'battle_tank/server_pub'
 
-#server = BattleTank::Server.new
-#
-#begin
-#  server.handle_requests
-#ensure
-#  server.close
-#end
 
+server_pub = BattleTank::ServerPub.new
 
-
-server = BattleTank::ServerPub.new
+server = BattleTank::Server.new(server_pub)
 
 begin
-  server.broadcast_world
+  server.handle_requests
 ensure
   server.close
 end

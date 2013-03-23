@@ -2,12 +2,18 @@ $DEBUG = true
 
 require 'curses'
 require 'bert'
+require 'securerandom'
 require 'battle_tank/client_sub'
+require 'battle_tank/client_push'
 
 class Control
   def initialize(view_port)
     @view_port = view_port
     init_client_sub
+  end
+
+  def client_id
+    @client_id ||= SecureRandom.hex
   end
 
   attr_reader :view_port
@@ -17,6 +23,10 @@ class Control
     Thread.new do
       sub.handle_requests
     end
+  end
+
+  def client_push
+    @client_push ||= BattleTank::ClientPush.new(client_id)
   end
 
   def do_action(action)
@@ -41,13 +51,13 @@ class Control
         c = view_port.get_key
         case c
         when :up
-          view_port.scroll(0, -1)
+          client_push.send({ action: 'move', dir: :up })
         when :down
-          view_port.scroll(0, 1)
+          client_push.send({ action: 'move', dir: :down })
         when :left
-          view_port.scroll(-1, 0)
+          client_push.send({ action: 'move', dir: :left })
         when :right
-          view_port.scroll(1, 0)
+          client_push.send({ action: 'move', dir: :right })
         end
       end
     end
