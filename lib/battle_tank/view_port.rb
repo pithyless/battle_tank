@@ -24,7 +24,7 @@ class ViewPort
   end
 
   def refresh
-    world.coords.each_with_index do |row, y|
+    world.render_coords.each_with_index do |row, y|
       next if y < view_y
 
       window.setpos(y - view_y, 0)

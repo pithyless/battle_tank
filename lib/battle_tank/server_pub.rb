@@ -12,8 +12,9 @@ module BattleTank
 
     def broadcast_world
       while true do
-        (1..30).each do |y|
-          broadcast(BERT.encode({'tank' => { x: 5, y: y } }))
+        x, y = 2, 2
+        (1..30).each do |idx|
+          broadcast(BERT.encode('moves' => [ {id: 'tank1', x: x + idx, y: y + idx} ]))
           sleep 0.5
         end
       end

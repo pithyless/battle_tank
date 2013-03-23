@@ -9,6 +9,8 @@ module BattleTank
         direction(:up)
       end
 
+      attr_accessor :x, :y
+
       def show
         definition['model']["#{side.to_s}"]
       end

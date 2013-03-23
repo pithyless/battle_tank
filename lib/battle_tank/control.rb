@@ -20,8 +20,10 @@ class Control
   end
 
   def do_action(action)
-    decode = BERT.decode(action).fetch('tank')
-    view_port.world.add(decode[:x], decode[:y], 'TANK')
+    moves = BERT.decode(action).fetch('moves')
+    moves.each do |move|
+      view_port.world.move(move[:id], move[:x], move[:y])
+    end
   end
 
   def view_loop
