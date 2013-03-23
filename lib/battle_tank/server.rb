@@ -70,7 +70,7 @@ module BattleTank
       diffs = {}
 
       receiver = Thread.new do
-        loop do
+        while true do
           string = ''
           rc = pull_socket.recv_string(string)
           raise "PULL socket returned errno [#{ZMQ::Util.errno}], msg [#{ZMQ::Util.error_string}]" unless ZMQ::Util.resultcode_ok?(rc)
@@ -78,13 +78,15 @@ module BattleTank
         end
       end
 
-      loop do
+      while true do
         sleep (WAIT_TIME)
         next if diffs.empty?
 
         broadcast_diff(diffs)
         diffs = {}
       end
+
+      receiver.join
     end
 
     def close
