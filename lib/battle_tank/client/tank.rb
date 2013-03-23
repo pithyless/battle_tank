@@ -3,9 +3,8 @@ require 'battle_tank/config_loader'
 module BattleTank
   class Client
     class Tank
-      def initialize(name, model)
+      def initialize(model)
         @definition = BattleTank::ConfigLoader.new.tank(model)
-        @name = name
         direction(:up)
       end
 
@@ -25,7 +24,7 @@ module BattleTank
 
       private
 
-      attr_reader :definition, :name, :side
+      attr_reader :definition, :side
     end
   end
 end

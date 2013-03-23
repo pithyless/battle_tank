@@ -30,7 +30,7 @@ class World
 
   def objects
     @objects ||= {
-      'tank1' => BattleTank::Client::Tank.new('', 'medium').tap do |t|
+      'tank1' => BattleTank::Client::Tank.new('medium').tap do |t|
         t.x = 2; t.y = 2
       end
     }
